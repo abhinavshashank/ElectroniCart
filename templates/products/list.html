@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}
+Products - {{ block.super }}
+{% endblock %}
+{% block content %}
+
+{% for product in products %}
+    <div>
+        {{ product.title }}
+        {% include "products/detail_snippet.html" with product=product %}
+    </div>
+{% endfor %}
+
+{% endblock %}
