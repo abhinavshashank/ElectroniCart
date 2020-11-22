@@ -15,3 +15,11 @@ class Product(models.Model):
 
     def has_inventory(self):
         return self.inventory > 0
+
+    def remocve_item_from_inventory(self, count = 1, save=True):
+        current_inv = self.inventory
+        current_inv -= count
+        self.inventory = current_inv
+        if save == True:
+            self.save()
+        return self.inventory

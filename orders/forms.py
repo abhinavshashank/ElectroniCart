@@ -3,7 +3,7 @@ from .models import Order
 class OrderForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):
-        #product = kwargs.pop("product") or None
+        product = kwargs.pop("product") or None
         super().__init__(*args, **kwargs)
         self.product = product
 
