@@ -1,19 +1,54 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
-User = get_user_model()
 # Create your tests here.
-class UserTestCase(TestCase):
-    def setUp(self):
-       user_a = User(username='abhinav', email='abhinavshashank008@gmail.com')
-       user_a.is_staff = True
-       user_a.is_superuser = True
-       user_a.set_password('password')
-       user_a.save()
-       print(user_a.id)
+# TDD
+
+User = get_user_model()
+
+class UserTestCast(TestCase):
+
+    def setUp(self): # Python's builtin unittest
+        user_a = User(username='abcd', email='abcd@abc.com')
+        # User.objects.create()
+        # User.objects.create_user()
+        user_a_pw = '12345'
+        self.user_a_pw = user_a_pw
+        user_a.is_staff = True
+        user_a.is_superuser = True
+        user_a.set_password(user_a_pw)
+        user_a.save()
+        self.user_a = user_a
     
-    def test_user_count(self):
+    def test_user_exists(self):
         user_count = User.objects.all().count()
-        self.assertEqual(user_count,1)
-        print(user_count)
-        self.assertNotEqual(user_count,0)
+        self.assertEqual(user_count, 1) # ==
+        self.assertNotEqual(user_count, 0) # !=
+
+    # def test_user_password(self):
+    #     self.assertTrue(
+    #         self.user_a.check_password(self.user_a_pw)
+    #     )
+
+    def test_user_password(self):
+        user_a = User.objects.get(username="abcd")
+        self.assertTrue(
+            user_a.check_password(self.user_a_pw)
+        )
+    
+    def test_login_url(self):
+        # login_url = "/login/"
+        # self.assertEqual(settings.LOGIN_URL, login_url)
+        login_url = settings.LOGIN_URL
+        # python requests - manage.py runserver
+        # self.client.get, self.client.post
+        # response = self.client.post(url, {}, follow=True)
+        data = {"username": "abc", "password": "12345"}
+        response = self.client.post(login_url, data, follow=True)
+        # print(dir(response))
+        # print(response.request)
+        status_code = response.status_code
+        redirect_path = response.request.get("PATH_INFO")
+        self.assertEqual(redirect_path, settings.LOGIN_REDIRECT_URL)
+        self.assertEqual(status_code, 200)
