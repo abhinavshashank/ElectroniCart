@@ -1,7 +1,13 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
     <head>
         <title>{% block title %}ElectriCart {% endblock %}</title>
+        <style>
+            h1 {color: red}
+        </style>
+        {% block head %} {% endblock %}
+        <link rel='stylesheet' href="{% static 'css/main.css' %}" >
     </head>
 
     <body>
