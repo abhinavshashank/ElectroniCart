@@ -8,7 +8,10 @@ class ProductModelForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = [
-            'title', 'content'
+            'title', 'content', 'image', 'media',
+        ]
+        exclude = [
+            'price'
         ]
     def clean_title(self):
         data = self.cleaned_data.get('title')

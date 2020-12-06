@@ -1,4 +1,8 @@
 from django.shortcuts import render, redirect
+import pathlib
+from mimetypes import guess_type
+from wsgiref.util import FileWrapper
+from django.http import Http404,HttpResponse
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
@@ -37,3 +41,30 @@ def order_checkout_view(request):
         del request.session['order_id']
         return redirect("/success")
     return render(request, 'orders/checkout.html', {"form" : form, "object":order_obj})
+
+def download_order(request, *args, **kwargs):
+    qs = Product.objects.filter(media__isnull=False)
+    product_obj = qs.first()
+    if not product_obj.media:
+        raise Http404
+    product_path = product_obj.media.path
+    path = pathlib.Path(product_path)
+    pk = product_obj.pk
+    extension = path.suffix
+    fname = f"{pk}{extension}"
+    if not path.exists():
+        raise Http404
+    with open(path, 'rb') as f:
+        wrapper = FileWrapper(f)
+        content_type = 'application/force-download'
+        guessed_ = guess_type(path)[0]
+        if guessed_:
+            content_type = guessed_
+        response = HttpResponse(wrapper, content_type='content_type')
+        response['Content-Disposition'] = f"attachment;filename={fname}"
+        response['X-SendFile'] = f"{fname}"
+        return response
+        
+    
+
+

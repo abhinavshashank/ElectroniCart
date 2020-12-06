@@ -1,15 +1,19 @@
 from django.db import models
 from django.conf import settings
+from .storages import ProtectedStorage
 User = settings.AUTH_USER_MODEL
+
+
 
 # Create your models here.
 class Product(models.Model):
     #id = models.AutoField()
     user = models.ForeignKey(User, null = True, on_delete=models.SET_NULL)
-    image = models.ImageField(upload_to='products/', null=True, blank=True)
-    title = models.CharField(max_length = 220)
-    content = models.TextField(null = True, blank = True)
-    price = models.DecimalField(max_digits = 10, decimal_places=2 , default = 0.00)
+    image = models.ImageField(upload_to='products/', null=True, blank=True, default=None)
+    media = models.FileField(upload_to='products/', storage=ProtectedStorage,default=None)
+    title = models.CharField(max_length = 220, default=None)
+    content = models.TextField(null = True, blank = True, default=None)
+    price = models.DecimalField(max_digits = 10, decimal_places=2, default = 0.00)
     inventory = models.IntegerField(default=0)
     featured = models.BooleanField(default=False)
 
